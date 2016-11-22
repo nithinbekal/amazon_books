@@ -32,7 +32,7 @@ defmodule AmazonBooks do
   Get the HTTPoison response for a given ISBN.
 
       AmazonBooks.lookup("076243631X")
-      #=> %{author: 'Lal Hardy', title: 'The Mammoth Book of Tattoos', xml: "..."}
+      #=> %{author: 'Lal Hardy', title: 'The Mammoth Book of Tattoos'}
 
   Include custom options:
 

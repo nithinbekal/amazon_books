@@ -7,7 +7,7 @@ Currently the only available option is to lookup by ISBN.
 
 ```elixir
 AmazonBooks.lookup("076243631X")
-#=> %{author: 'Lal Hardy', title: 'The Mammoth Book of Tattoos', xml: "..."}
+#=> %{author: 'Lal Hardy', title: 'The Mammoth Book of Tattoos'}
 ```
 
 ## Usage
