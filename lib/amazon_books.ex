@@ -29,7 +29,10 @@ defmodule AmazonBooks do
   @secret_access_key Application.get_env(:amazon_books, :secret_access_key)
 
   @doc """
-  Get the HTTPoison response for a given ISBN.
+  Find book by ISBN, ASIN or EAN.
+
+  Returns the result in the form of a list. Lookup multiple books by passing in
+  a comma separated list of ISBNs.
 
       AmazonBooks.lookup("076243631X")
       #=> %{author: 'Lal Hardy', title: 'The Mammoth Book of Tattoos'}
@@ -75,35 +78,27 @@ defmodule AmazonBooks do
     "#{service_url}?#{query_str}"
     |> AwsSignUrl.call(@secret_access_key)
     |> HTTPoison.get!
-    |> build_result
+    |> xml_to_list
   end
 
-  defp build_result(xml) do
-    body = xml.body
-    operation = SweetXml.xpath(body, ~x"//OperationRequest/Arguments/Argument[@Name='Operation']/@Value")
-    results =
-      SweetXml.xpath(body,
-        ~x"//Item/ItemAttributes"l,
-        title: ~x"./Title/text()",
-        author: ~x"./Author/text()",
-        ean: ~x"./EAN/text()",
-        isbn: ~x"./ISBN/text()",
-        publisher: ~x"./Publisher/text()",
-        number_of_pages: ~x"./NumberOfPages/text()",
-        price: ~x"./ListPrice/Amount/text()",
-        currency: ~x"./ListPrice/CurrencyCode/text()"
-      )
+  @xpath_list [
+    title: ~x"./Title/text()",
+    author: ~x"./Author/text()",
+    ean: ~x"./EAN/text()",
+    isbn: ~x"./ISBN/text()",
+    publisher: ~x"./Publisher/text()",
+    number_of_pages: ~x"./NumberOfPages/text()",
+    price: ~x"./ListPrice/Amount/text()",
+    currency: ~x"./ListPrice/CurrencyCode/text()"
+  ]
 
-    if operation == 'ItemLookup' do
-      List.first(results)
-      |> convert_values_to_string
-    else
-      results
-      |> Enum.map(&convert_values_to_string/1)
-    end
+  defp xml_to_list(xml) do
+    xml.body
+    |> SweetXml.xpath(~x"//Item/ItemAttributes"l, @xpath_list)
+    |> Enum.map(&convert_values_to_string/1)
   end
 
-  defp convert_values_to_string(map) when is_map(map) do
-    Enum.reduce(map, %{}, fn {key, val}, acc -> Map.put(acc, key, to_string(val)) end)
+  defp convert_values_to_string(result) when is_map(result) do
+    Enum.reduce(result, %{}, fn {key, val}, acc -> Map.put(acc, key, to_string(val)) end)
   end
 end
