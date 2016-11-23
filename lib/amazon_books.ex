@@ -96,8 +96,14 @@ defmodule AmazonBooks do
 
     if operation == 'ItemLookup' do
       List.first(results)
+      |> convert_values_to_string
     else
       results
+      |> Enum.map(&convert_values_to_string/1)
     end
+  end
+
+  defp convert_values_to_string(map) when is_map(map) do
+    Enum.reduce(map, %{}, fn {key, val}, acc -> Map.put(acc, key, to_string(val)) end)
   end
 end
