@@ -34,8 +34,12 @@ defmodule AmazonBooks do
   Returns the result in the form of a list. Lookup multiple books by passing in
   a comma separated list of ISBNs.
 
-      AmazonBooks.lookup("076243631X")
-      #=> %{author: 'Lal Hardy', title: 'The Mammoth Book of Tattoos'}
+      AmazonBooks.lookup("9781633430112")
+
+      AmazonBooks.lookup("9781633430112,9780141035482")
+      # =>
+      # [%{author: "Benjamin Tan Wei Hao", title: "The Little Elixir ", ...},
+      #  %{author: "Niall Ferguson", title: "The Ascent of Money: A Financial History of the World"}]
 
   Include custom options:
 
