@@ -42,6 +42,7 @@ defmodule AmazonBooks do
   def lookup(isbn, opts \\ %{}) do
     %{"IdType" => "ISBN", "ItemId" => isbn, "Operation" => "ItemLookup"}
     |> send_request(opts)
+    |> IO.inspect
     |> fetch_one
   end
 
