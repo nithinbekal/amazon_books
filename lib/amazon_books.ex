@@ -5,7 +5,7 @@ defmodule AmazonBooks do
     "AWSAccessKeyId" => Application.get_env(:amazon_books, :access_key_id),
     "AssociateTag"   => Application.get_env(:amazon_books, :associate_tag),
     "Operation"      => "ItemSearch",
-    "ResponseGroup"  => "Small,OfferSummary",
+    "ResponseGroup"  => "ItemAttributes",
     "SearchIndex"    => "Books",
     "Service"        => "AWSECommerceService",
     "Sort"           => "salesrank"
@@ -42,7 +42,6 @@ defmodule AmazonBooks do
   def lookup(isbn, opts \\ %{}) do
     %{"IdType" => "ISBN", "ItemId" => isbn, "Operation" => "ItemLookup"}
     |> send_request(opts)
-    |> IO.inspect
     |> fetch_one
   end
 
@@ -89,6 +88,13 @@ defmodule AmazonBooks do
     SweetXml.xpath(xml,
       ~x"//Item/ItemAttributes"l,
       title: ~x"./Title/text()",
-      author: ~x"./Author/text()")
+      author: ~x"./Author/text()",
+      ean: ~x"./EAN/text()",
+      isbn: ~x"./ISBN/text()",
+      publisher: ~x"./Publisher/text()",
+      number_of_pages: ~x"./NumberOfPages/text()",
+      price: ~x"./ListPrice/Amount/text()",
+      currency: ~x"./ListPrice/CurrencyCode/text()"
+    )
   end
 end
