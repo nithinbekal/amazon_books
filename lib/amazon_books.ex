@@ -42,7 +42,6 @@ defmodule AmazonBooks do
   def lookup(isbn, opts \\ %{}) do
     %{"IdType" => "ISBN", "ItemId" => isbn, "Operation" => "ItemLookup"}
     |> send_request(opts)
-    |> fetch_one
   end
 
   @doc """
@@ -76,25 +75,29 @@ defmodule AmazonBooks do
     "#{service_url}?#{query_str}"
     |> AwsSignUrl.call(@secret_access_key)
     |> HTTPoison.get!
-  end
-
-  defp fetch_one(response) do
-    response.body
     |> build_result
-    |> List.first
   end
 
   defp build_result(xml) do
-    SweetXml.xpath(xml,
-      ~x"//Item/ItemAttributes"l,
-      title: ~x"./Title/text()",
-      author: ~x"./Author/text()",
-      ean: ~x"./EAN/text()",
-      isbn: ~x"./ISBN/text()",
-      publisher: ~x"./Publisher/text()",
-      number_of_pages: ~x"./NumberOfPages/text()",
-      price: ~x"./ListPrice/Amount/text()",
-      currency: ~x"./ListPrice/CurrencyCode/text()"
-    )
+    body = xml.body
+    operation = SweetXml.xpath(body, ~x"//OperationRequest/Arguments/Argument[@Name='Operation']/@Value")
+    results =
+      SweetXml.xpath(body,
+        ~x"//Item/ItemAttributes"l,
+        title: ~x"./Title/text()",
+        author: ~x"./Author/text()",
+        ean: ~x"./EAN/text()",
+        isbn: ~x"./ISBN/text()",
+        publisher: ~x"./Publisher/text()",
+        number_of_pages: ~x"./NumberOfPages/text()",
+        price: ~x"./ListPrice/Amount/text()",
+        currency: ~x"./ListPrice/CurrencyCode/text()"
+      )
+
+    if operation == 'ItemLookup' do
+      List.first(results)
+    else
+      results
+    end
   end
 end
