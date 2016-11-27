@@ -71,7 +71,7 @@ defmodule AmazonBooks do
 
   defp send_request(params, opts \\ %{}) do
     country = Map.get(opts, "country", "US")
-    service_url = @service_urls[country]
+    service_url = Map.get(@service_urls, country, @service_urls["US"])
 
     query_str =
       @default_query_params
