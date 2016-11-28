@@ -5,7 +5,7 @@ defmodule AmazonBooks do
     "AWSAccessKeyId" => Application.get_env(:amazon_books, :access_key_id),
     "AssociateTag"   => Application.get_env(:amazon_books, :associate_tag),
     "Operation"      => "ItemSearch",
-    "ResponseGroup"  => "ItemAttributes",
+    "ResponseGroup"  => "ItemAttributes,OfferSummary",
     "SearchIndex"    => "Books",
     "Service"        => "AWSECommerceService",
     "Sort"           => "salesrank"
@@ -86,23 +86,18 @@ defmodule AmazonBooks do
   end
 
   @xpath_list [
-    title: ~x"./Title/text()",
-    author: ~x"./Author/text()",
-    ean: ~x"./EAN/text()",
-    isbn: ~x"./ISBN/text()",
-    publisher: ~x"./Publisher/text()",
-    number_of_pages: ~x"./NumberOfPages/text()",
-    price: ~x"./ListPrice/Amount/text()",
-    currency: ~x"./ListPrice/CurrencyCode/text()"
+    asin: ~x"./ASIN/text()"s,
+    title: ~x"./ItemAttributes/Title/text()"s,
+    author: ~x"./ItemAttributes/Author/text()"s,
+    ean: ~x"./ItemAttributes/EAN/text()"s,
+    isbn: ~x"./ItemAttributes/ISBN/text()"s,
+    publisher: ~x"./ItemAttributes/Publisher/text()"s,
+    number_of_pages: ~x"./ItemAttributes/NumberOfPages/text()"s,
+    list_price: ~x"./ItemAttributes/ListPrice/Amount/text()"s,
+    list_price_currency: ~x"./ItemAttributes/ListPrice/CurrencyCode/text()"s,
+    lowest_price: ~x"./OfferSummary/LowestNewPrice/Amount/text()"s,
+    lowest_price_currency: ~x"./OfferSummary/LowestNewPrice/CurrencyCode/text()"s,
   ]
 
-  defp xml_to_list(xml) do
-    xml.body
-    |> SweetXml.xpath(~x"//Item/ItemAttributes"l, @xpath_list)
-    |> Enum.map(&convert_values_to_string/1)
-  end
-
-  defp convert_values_to_string(result) when is_map(result) do
-    Enum.reduce(result, %{}, fn {key, val}, acc -> Map.put(acc, key, to_string(val)) end)
-  end
+  defp xml_to_list(xml), do: SweetXml.xpath(xml.body, ~x"//Item"l, @xpath_list)
 end
