@@ -72,6 +72,7 @@ defmodule AmazonBooks do
   defp send_request(params, opts \\ %{}) do
     country = Map.get(opts, "country", "US")
     service_url = Map.get(@service_urls, country, @service_urls["US"])
+    opts = Map.drop(opts, ["country"])
 
     query_str =
       @default_query_params
@@ -95,11 +96,8 @@ defmodule AmazonBooks do
     number_of_pages: ~x"./ItemAttributes/NumberOfPages/text()"s,
     list_price: ~x"./ItemAttributes/ListPrice/Amount/text()"s,
     list_price_currency: ~x"./ItemAttributes/ListPrice/CurrencyCode/text()"s,
-    offer: [
-      ~x".//OfferSummary/LowestNewPrice"l,
-      amount: ~x"./Amount/text()"s,
-      currency: ~x"./CurrencyCode/text()"s,
-    ],
+    offer_price: ~x"./OfferSummary/LowestNewPrice/Amount/text()"s,
+    offer_currency: ~x"./OfferSummary/LowestNewPrice/CurrencyCode/text()"s,
   ]
 
   defp xml_to_list(xml), do: SweetXml.xpath(xml.body, ~x"//Item"l, @xpath_list)
