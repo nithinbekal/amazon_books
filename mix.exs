@@ -23,7 +23,7 @@ defmodule AmazonBooks.Mixfile do
       {:httpoison, "~> 0.10"},
       {:sweet_xml, "~> 0.6"},
 
-      {:ex_doc, ">= 0.0.0", only: :dev},
+      {:ex_doc, ">= 0.19.0", only: :dev},
     ]
   end
 
