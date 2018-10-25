@@ -20,7 +20,7 @@ defmodule AmazonBooks.Mixfile do
   defp deps do
     [
       {:aws_sign_url, "~> 0.1.0"},
-      {:httpoison, "~> 0.10"},
+      {:httpoison, "~> 1.4.0"},
       {:sweet_xml, "~> 0.6"},
 
       {:ex_doc, ">= 0.19.0", only: :dev},
