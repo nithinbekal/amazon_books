@@ -3,8 +3,8 @@ defmodule AmazonBooks.Mixfile do
 
   def project do
     [app: :amazon_books,
-     version: "0.2.0",
-     elixir: "~> 1.3",
+     version: "0.3.0",
+     elixir: "~> 1.4",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      deps: deps(),
