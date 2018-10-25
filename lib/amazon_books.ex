@@ -45,7 +45,7 @@ defmodule AmazonBooks do
 
       AmazonBooks.lookup("076243631X", %{"Sort" => "relevancerank"})
 
-  """ 
+  """
   def lookup(isbn, opts \\ %{}) do
     %{"IdType" => "ISBN", "ItemId" => isbn, "Operation" => "ItemLookup"}
     |> send_request(opts)
