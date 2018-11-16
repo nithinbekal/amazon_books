@@ -9,7 +9,7 @@ Add `amazon_books` to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
-  [{:amazon_books, "~> 0.1.0"}]
+  [{:amazon_books, "~> 0.4.0"}]
 end
 ```
 

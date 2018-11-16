@@ -1,6 +1,17 @@
 
 # Changelog
 
+## v0.4.0
+
+Add support dynamic system env config lookup. Example:
+
+```elixir
+config :amazon_books,
+  associate_tag: {:system, "AMAZON_ASSOCIATE_TAG"},
+  access_key_id: {:system, "AMAZON_ACCESS_KEY_ID"},
+  secret_access_key: {:system, "AMAZON_SECRET_ACCESS_KEY"}
+```
+
 ## v0.3.0
 
 - Default to US service URL if invalid country given
