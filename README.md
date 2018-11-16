@@ -3,13 +3,6 @@
 
 Provides functions to fetch book information from Amazon Products API.
 
-Currently the only available option is to lookup by ISBN.
-
-```elixir
-AmazonBooks.lookup("076243631X")
-#=> %{author: 'Lal Hardy', title: 'The Mammoth Book of Tattoos'}
-```
-
 ## Usage
 
 Add `amazon_books` to your list of dependencies in `mix.exs`:
@@ -27,6 +20,18 @@ config :amazon_books, :associate_tag, "associate-tag"
 config :amazon_books, :access_key_id, "your-access-key"
 config :amazon_books, :secret_access_key, "your-key" 
 ```
+
+In production, you might want to load your config from environment variables.
+For this, you can use the following syntax:
+
+```elixir
+config :amazon_books,
+  associate_tag: {:system, "AMAZON_ASSOCIATE_TAG"},
+  access_key_id: {:system, "AMAZON_ACCESS_KEY_ID"},
+  secret_access_key: {:system, "AMAZON_SECRET_ACCESS_KEY"}
+```
+
+Examples:
 
 ```elixir
 # Lookup by ISBN 10 or ASIN
