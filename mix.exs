@@ -8,8 +8,11 @@ defmodule AmazonBooks.Mixfile do
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      deps: deps(),
-     description: "Fetch book information from Amazon API",
-     package: package()
+     docs: docs(),
+     package: package(),
+     description: """
+     Fetch book information from Amazon API"
+     """
     ]
   end
 
@@ -33,6 +36,13 @@ defmodule AmazonBooks.Mixfile do
       maintainers: ["Nithin Bekal"],
       licenses: ["MIT"],
       links: %{"Github" => "https://github.com/nithinbekal/amazon_books"},
+    ]
+  end
+
+  defp docs do
+    [
+      extras: ["README.md"],
+      main: "readme"
     ]
   end
 end
