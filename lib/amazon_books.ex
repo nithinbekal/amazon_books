@@ -53,8 +53,8 @@ defmodule AmazonBooks do
   end
 
   def search_by_title(title, opts \\ %{}) do
-   %{"Operation" => "ItemSearch", "Title" => title}
-   |> send_request(opts)
+    %{"Operation" => "ItemSearch", "Title" => title}
+    |> send_request(opts)
   end
 
   defp send_request(params, opts \\ %{}) do
@@ -70,7 +70,7 @@ defmodule AmazonBooks do
 
     "#{service_url}?#{query_str}"
     |> AwsSignUrl.call(fetch_config(:secret_access_key))
-    |> HTTPoison.get!
+    |> HTTPoison.get!()
     |> xml_to_list
   end
 
@@ -85,7 +85,7 @@ defmodule AmazonBooks do
     list_price: ~x"./ItemAttributes/ListPrice/Amount/text()"s,
     list_price_currency: ~x"./ItemAttributes/ListPrice/CurrencyCode/text()"s,
     offer_price: ~x"./OfferSummary/LowestNewPrice/Amount/text()"s,
-    offer_currency: ~x"./OfferSummary/LowestNewPrice/CurrencyCode/text()"s,
+    offer_currency: ~x"./OfferSummary/LowestNewPrice/CurrencyCode/text()"s
   ]
 
   defp xml_to_list(xml), do: SweetXml.xpath(xml.body, ~x"//Item"l, @xpath_list)
@@ -93,12 +93,12 @@ defmodule AmazonBooks do
   defp default_query_params do
     %{
       "AWSAccessKeyId" => fetch_config(:access_key_id),
-      "AssociateTag"   => fetch_config(:associate_tag),
-      "Operation"      => "ItemSearch",
-      "ResponseGroup"  => "ItemAttributes,OfferSummary",
-      "SearchIndex"    => "Books",
-      "Service"        => "AWSECommerceService",
-      "Sort"           => "salesrank"
+      "AssociateTag" => fetch_config(:associate_tag),
+      "Operation" => "ItemSearch",
+      "ResponseGroup" => "ItemAttributes,OfferSummary",
+      "SearchIndex" => "Books",
+      "Service" => "AWSECommerceService",
+      "Sort" => "salesrank"
     }
   end
 
@@ -106,6 +106,7 @@ defmodule AmazonBooks do
     Application.get_env(:amazon_books, key)
     |> fetch_config
   end
+
   defp fetch_config(string) when is_binary(string), do: string
   defp fetch_config({:system, env_var}), do: System.get_env(env_var)
 end
