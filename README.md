@@ -18,7 +18,7 @@ Configure your AWS credentials like this:
 ```elixir
 config :amazon_books, :associate_tag, "associate-tag"
 config :amazon_books, :access_key_id, "your-access-key"
-config :amazon_books, :secret_access_key, "your-key" 
+config :amazon_books, :secret_access_key, "your-key"
 ```
 
 In production, you might want to load your config from environment variables.
