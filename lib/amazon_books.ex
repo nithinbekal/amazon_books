@@ -1,16 +1,6 @@
 defmodule AmazonBooks do
   import SweetXml
 
-  @default_query_params %{
-    "AWSAccessKeyId" => Application.get_env(:amazon_books, :access_key_id),
-    "AssociateTag"   => Application.get_env(:amazon_books, :associate_tag),
-    "Operation"      => "ItemSearch",
-    "ResponseGroup"  => "ItemAttributes,OfferSummary",
-    "SearchIndex"    => "Books",
-    "Service"        => "AWSECommerceService",
-    "Sort"           => "salesrank"
-  }
-
   @service_urls %{
     "US" => "http://webservices.amazon.com/onca/xml",
     "UK" => "http://webservices.amazon.co.uk/onca/xml",
@@ -25,8 +15,6 @@ defmodule AmazonBooks do
     "BR" => "http://webservices.amazon.com.br/onca/xml",
     "MX" => "http://webservices.amazon.com.mx/onca/xml"
   }
-
-  @secret_access_key Application.get_env(:amazon_books, :secret_access_key)
 
   @doc """
   Find book by ISBN, ASIN or EAN.
@@ -75,13 +63,13 @@ defmodule AmazonBooks do
     opts = Map.drop(opts, ["country"])
 
     query_str =
-      @default_query_params
+      default_query_params()
       |> Map.merge(opts)
       |> Map.merge(params)
       |> URI.encode_query()
 
     "#{service_url}?#{query_str}"
-    |> AwsSignUrl.call(@secret_access_key)
+    |> AwsSignUrl.call(fetch_config(:secret_access_key))
     |> HTTPoison.get!
     |> xml_to_list
   end
@@ -101,4 +89,23 @@ defmodule AmazonBooks do
   ]
 
   defp xml_to_list(xml), do: SweetXml.xpath(xml.body, ~x"//Item"l, @xpath_list)
+
+  defp default_query_params do
+    %{
+      "AWSAccessKeyId" => fetch_config(:access_key_id),
+      "AssociateTag"   => fetch_config(:associate_tag),
+      "Operation"      => "ItemSearch",
+      "ResponseGroup"  => "ItemAttributes,OfferSummary",
+      "SearchIndex"    => "Books",
+      "Service"        => "AWSECommerceService",
+      "Sort"           => "salesrank"
+    }
+  end
+
+  defp fetch_config(key) when is_atom(key) do
+    Application.get_env(:amazon_books, key)
+    |> fetch_config
+  end
+  defp fetch_config(string) when is_binary(string), do: string
+  defp fetch_config({:system, env_var}), do: System.get_env(env_var)
 end
